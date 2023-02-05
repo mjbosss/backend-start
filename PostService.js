@@ -1,52 +1,40 @@
+import Post from "./Post.js";
+import fileService from "./fileService.js";
+
 class PostService {
-    async create(post) {
-        
-        const createdPost = await Post.create(post);
+    async create(post, picture) {
+        const fileName = fileService.saveFile(picture);
+        const createdPost = await Post.create({...post, picture: fileName});
         return createdPost;
     }
 
-    async getAll(req, res) {
-        try {
-            const posts = await Post.find();
-            return res.json(posts);
-        }   catch (e) {
-            res.status(500).json(e);  
-        }
+    async getAll() {
+        const posts = await Post.find();
+        return posts;
     }
     async getOne(id) {
         if (!id) {
-            throw new Error('не указан id')
+            throw new Error('не указан ID')
         }
         const post = await Post.findById(id);
-        return res.json(post);
-           
+        return post;
     }
-    async update(req, res) {
-        try {
-            const post = req.body
-            if (!post._id) {
-                res.status(400).json({message: 'Id не указан!'})
-            }
-            const updatedPost = await Post.findByIdAndUpdate(post._id, post, {new: true});
-            return res.json(updatedPost);
-        }   catch (e) {
-            res.status(500).json(e)  
+
+    async update(post) {
+        if (!post._id) {
+            throw new Error('не указан ID')
         }
+        const updatedPost = await Post.findByIdAndUpdate(post._id, post, {new: true})
+        return updatedPost;
     }
-    async delete(req, res) {
-        try {
-            const {id} = req.params;
-            const post =await Post.findByIdAndDelete(id);
+
+    async delete(id) {
             if (!id) {
-                res.status(400).json({message: 'Id не указан!'})
+                throw new Error('не указан ID')
             }
-            return res.json(post);
-        }   catch (e) {
-            res.status(500).json(e)  
-        }
+            const post = await Post.findByIdAndDelete(id);
+            return post;
     }
 }
-
-
 
 export default new PostService();
