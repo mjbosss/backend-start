@@ -8,6 +8,7 @@ const MONGO_URL = 'mongodb+srv://admin:admin@cluster0.jxjn3gs.mongodb.net/?retry
 const app = express();
 
 app.use(express.json());
+app.use(express.static('static'));
 app.use(fileUpload({}));
 app.use('/api', router);
 
@@ -16,7 +17,7 @@ async function startApp() {
         await mongoose.connect(MONGO_URL, {useUnifiedTopology: true, useNewUrlParser: true});
         app.listen(PORT, () => console.log('server started on port ' + PORT));
     } catch (e) {
-        console.log(e, 'error suka');
+        console.log(e, 'error');
     }
 }
 startApp()
